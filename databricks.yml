@@ -1,0 +1,22 @@
+bundle:
+  name: customer-metrics
+
+include:
+  - resources/*.yml
+
+variables:
+  source_table:
+    description: Fully qualified governed source table
+    default: main.default.customers
+  target_table:
+    description: Fully qualified managed analytics table
+    default: main.default.customer_metrics
+  compute_policy_id:
+    description: ID of the approved development compute policy
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
