@@ -1,0 +1,44 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: databricks-development
+
+steps:
+  - checkout: self
+
+  - bash: |
+      set -euo pipefail
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/v1.19.0/install.sh | sh
+      databricks version
+    displayName: Install Databricks CLI
+
+  - bash: databricks bundle validate --target dev
+    displayName: Validate development bundle
+    env:
+      DATABRICKS_HOST: $(DATABRICKS_HOST)
+      DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+      BUNDLE_VAR_compute_policy_id: $(BUNDLE_VAR_compute_policy_id)
+      BUNDLE_VAR_source_table: $(BUNDLE_VAR_source_table)
+      BUNDLE_VAR_target_table: $(BUNDLE_VAR_target_table)
+
+  - bash: databricks bundle deploy --target dev
+    displayName: Deploy development bundle
+    env:
+      DATABRICKS_HOST: $(DATABRICKS_HOST)
+      DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+      BUNDLE_VAR_compute_policy_id: $(BUNDLE_VAR_compute_policy_id)
+      BUNDLE_VAR_source_table: $(BUNDLE_VAR_source_table)
+      BUNDLE_VAR_target_table: $(BUNDLE_VAR_target_table)
+
+  - bash: databricks bundle run customer_metrics --target dev
+    displayName: Run customer metrics job
+    env:
+      DATABRICKS_HOST: $(DATABRICKS_HOST)
+      DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+      BUNDLE_VAR_compute_policy_id: $(BUNDLE_VAR_compute_policy_id)
+      BUNDLE_VAR_source_table: $(BUNDLE_VAR_source_table)
+      BUNDLE_VAR_target_table: $(BUNDLE_VAR_target_table)

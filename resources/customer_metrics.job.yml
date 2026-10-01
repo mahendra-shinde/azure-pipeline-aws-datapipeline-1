@@ -1,0 +1,20 @@
+resources:
+  jobs:
+    customer_metrics:
+      name: customer-metrics-${bundle.target}
+      tasks:
+        - task_key: aggregate_customer_metrics
+          job_cluster_key: development_cluster
+          notebook_task:
+            notebook_path: ../src/customer_metrics.py
+            base_parameters:
+              source_table: ${var.source_table}
+              target_table: ${var.target_table}
+      job_clusters:
+        - job_cluster_key: development_cluster
+          new_cluster:
+            policy_id: ${var.compute_policy_id}
+            apply_policy_default_values: true
+            spark_version: 15.4.x-scala2.12
+            node_type_id: i3.xlarge
+            num_workers: 1
