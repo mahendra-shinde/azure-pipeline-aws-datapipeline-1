@@ -1,8 +1,8 @@
 # Databricks notebook source
 from pyspark.sql import functions as F
 
-dbutils.widgets.text("source_table", "main.default.customers")
-dbutils.widgets.text("target_table", "main.default.customer_metrics")
+dbutils.widgets.text("source_table", "samples.bakehouse.sales_customers")
+dbutils.widgets.text("target_table", "workspace.default.sales_customers_metrics")
 
 source_table = dbutils.widgets.get("source_table")
 target_table = dbutils.widgets.get("target_table")
@@ -10,7 +10,7 @@ target_table = dbutils.widgets.get("target_table")
 customer_metrics = (
     spark.table(source_table)
     .groupBy("country")
-    .agg(F.countDistinct("customer_id").alias("customer_count"))
+    .agg(F.countDistinct("customerId").alias("customer_count"))
 )
 
 (
